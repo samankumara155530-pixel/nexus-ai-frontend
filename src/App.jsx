@@ -1,7 +1,7 @@
 
 import { useEffect, useState } from "react";
 import { supabase } from "./supabase";
-import Auth from "./Auth";
+import Auth from "./src/auth";
 import {
   Sparkles,
   Send,
@@ -17,8 +17,10 @@ export default function App() {
   const [sending, setSending] = useState(false);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data }) => {
-      setSession(data.session);
+    supabase.auth.getSession().then(({ data, error }) => {
+      if (!error) {
+        setSession(data.session);
+      }
       setLoading(false);
     });
 
@@ -46,8 +48,14 @@ export default function App() {
     setSending(true);
 
     try {
+      const apiUrl = import.meta.env.VITE_API_URL;
+
+      if (!apiUrl) {
+        throw new Error("Backend URL එක සොයාගත නොහැක.");
+      }
+
       const response = await fetch(
-        `${import.meta.env.VITE_BACKEND_URL}/chat`,
+        `${apiUrl.replace(/\/+$/, "")}/chat`,
         {
           method: "POST",
           headers: {
@@ -66,7 +74,10 @@ export default function App() {
 
       setMessages(prev => [
         ...prev,
-        { role: "assistant", text: data.reply }
+        {
+          role: "assistant",
+          text: data.reply || "AI පිළිතුරක් ලැබුණේ නැහැ."
+        }
       ]);
 
     } catch (error) {
@@ -83,12 +94,22 @@ export default function App() {
   }
 
   async function logout() {
-    await supabase.auth.signOut();
+    const { error } = await supabase.auth.signOut();
+
+    if (error) {
+      console.error("Logout error:", error.message);
+      return;
+    }
+
     setMessages([]);
   }
 
   if (loading) {
-    return <div className="loading-screen">NEXUS AI Loading...</div>;
+    return (
+      <div className="loading-screen">
+        NEXUS AI Loading...
+      </div>
+    );
   }
 
   if (!session) {
@@ -119,7 +140,10 @@ export default function App() {
         ) : (
           <div className="messages-container">
             {messages.map((item, index) => (
-              <div key={index} className={`message-row ${item.role}`}>
+              <div
+                key={index}
+                className={`message-row ${item.role}`}
+              >
                 {item.role === "user" ? <User /> : <Sparkles />}
                 <p>{item.text}</p>
               </div>
@@ -137,11 +161,17 @@ export default function App() {
             rows={2}
           />
 
-          <button type="submit" disabled={sending || !message.trim()}>
+          <button
+            type="submit"
+            disabled={sending || !message.trim()}
+          >
             <Send size={20} />
           </button>
         </form>
-        {sending && <p> NEXUS AI පිළිතුර සකස් කරමින්...</p>}
+
+        {sending && (
+          <p>NEXUS AI පිළිතුර සකස් කරමින්...</p>
+        )}
       </footer>
     </div>
   );
