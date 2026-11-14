@@ -1,265 +1,280 @@
 
-import { useState } from "react";
-import {
-  Menu,
-  Plus,
-  MessageSquare,
-  Send,
-  Sparkles,
-  Settings,
-  User,
-  Bot,
-  PanelLeftClose,
-  Paperclip,
-  Mic,
-  Sun,
-  Moon
-} from "lucide-react";
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
 
-export default function App() {
-  const [message, setMessage] = useState("");
-  const [messages, setMessages] = useState([]);
-  const [sidebarOpen, setSidebarOpen] = useState(true);
-  const [darkMode, setDarkMode] = useState(true);
+body {
+  font-family: Arial, sans-serif;
+  background: #080d19;
+  color: #f1f5f9;
+}
 
-  function sendMessage(e) {
-    e.preventDefault();
+button, textarea, input {
+  font: inherit;
+}
 
-    if (!message.trim()) return;
+button {
+  cursor: pointer;
+}
 
-    setMessages((previous) => [
-      ...previous,
-      {
-        role: "user",
-        text: message.trim()
-      },
-      {
-        role: "assistant",
-        text: "ඔබගේ පණිවිඩය ලැබුණා. NEXUS AI Backend සම්බන්ධ කිරීම ඊළඟ පියවරේදී සිදු කරමු."
-      }
-    ]);
+.nexus-app {
+  min-height: 100vh;
+  background: #080d19;
+  color: #f1f5f9;
+}
 
-    setMessage("");
+.topbar {
+  height: 70px;
+  padding: 0 25px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #111827;
+  border-bottom: 1px solid #263247;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: #a78bfa;
+  font-size: 21px;
+}
+
+.logout-button {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  padding: 10px 16px;
+  background: #263247;
+  color: white;
+  border: none;
+  border-radius: 9px;
+}
+
+.chat-area {
+  min-height: calc(100vh - 190px);
+  max-width: 850px;
+  margin: auto;
+  padding: 35px 20px;
+}
+
+.welcome-screen {
+  min-height: 65vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  text-align: center;
+  color: #a78bfa;
+}
+
+.welcome-screen h1 {
+  color: white;
+  font-size: 32px;
+}
+
+.welcome-screen p {
+  color: #94a3b8;
+}
+
+.messages-container {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+}
+
+.message-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 15px;
+  padding: 17px;
+  border-radius: 12px;
+  line-height: 1.7;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.message-row.user {
+  background: #17243a;
+}
+
+.message-row.assistant {
+  background: #111827;
+}
+
+.message-row svg {
+  flex-shrink: 0;
+  color: #a78bfa;
+}
+
+.composer-section {
+  position: sticky;
+  bottom: 0;
+  padding: 20px;
+  background: #080d19;
+  border-top: 1px solid #263247;
+}
+
+.message-form {
+  max-width: 850px;
+  margin: auto;
+  display: flex;
+  gap: 12px;
+  padding: 12px;
+  background: #111827;
+  border: 1px solid #334155;
+  border-radius: 15px;
+}
+
+.message-form textarea {
+  flex: 1;
+  resize: none;
+  min-width: 0;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: white;
+  padding: 10px;
+  line-height: 1.6;
+}
+
+.message-form button {
+  width: 48px;
+  height: 48px;
+  border: none;
+  border-radius: 12px;
+  background: #7c3aed;
+  color: white;
+}
+
+.message-form button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.auth-container {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  background: #080d19;
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 420px;
+  padding: 35px;
+  border-radius: 20px;
+  background: #111827;
+  border: 1px solid #334155;
+  text-align: center;
+}
+
+.auth-card h1 {
+  color: #a78bfa;
+  margin: 15px 0;
+}
+
+.auth-card h2 {
+  margin: 25px 0;
+}
+
+.auth-card > p {
+  color: #94a3b8;
+  margin: 15px 0;
+}
+
+.auth-card form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  text-align: left;
+}
+
+.auth-card label {
+  font-size: 14px;
+  color: #cbd5e1;
+}
+
+.auth-input {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 13px;
+  background: #080d19;
+  border: 1px solid #334155;
+  border-radius: 9px;
+}
+
+.auth-input svg {
+  color: #a78bfa;
+}
+
+.auth-input input {
+  width: 100%;
+  min-width: 0;
+  background: transparent;
+  color: white;
+  border: none;
+  outline: none;
+}
+
+.auth-card form > button {
+  margin-top: 15px;
+  padding: 14px;
+  border: none;
+  border-radius: 9px;
+  background: #7c3aed;
+  color: white;
+  font-weight: bold;
+}
+
+.auth-card form > button:disabled {
+  opacity: 0.5;
+}
+
+.auth-switch {
+  background: transparent;
+  color: #a78bfa;
+  border: none;
+  font-weight: bold;
+}
+
+.auth-message {
+  overflow-wrap: anywhere;
+  color: #a78bfa;
+}
+
+.loading-screen {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  background: #080d19;
+  color: #a78bfa;
+}
+
+@media (max-width: 600px) {
+  .topbar {
+    padding: 0 15px;
   }
 
-  function newChat() {
-    setMessages([]);
-    setMessage("");
+  .chat-area {
+    padding: 20px 12px;
   }
 
-  return (
-    <div className={`nexus-app ${darkMode ? "dark" : "light"}`}>
+  .welcome-screen h1 {
+    font-size: 25px;
+  }
 
-      {sidebarOpen && (
-        <aside className="sidebar">
+  .auth-card {
+    padding: 25px 18px;
+  }
 
-          <div className="brand">
-            <div className="brand-icon">
-              <Sparkles size={23} />
-            </div>
-            <span>NEXUS AI</span>
-            <button onClick={() => setSidebarOpen(false)}>
-              <PanelLeftClose size={19} />
-            </button>
-          </div>
-
-          <button className="new-chat" onClick={newChat}>
-            <Plus size={19} />
-            New Chat
-          </button>
-
-          <div className="sidebar-heading">
-            WORKSPACE
-          </div>
-
-          <button className="sidebar-item active">
-            <MessageSquare size={18} />
-            Chat
-          </button>
-
-          <button className="sidebar-item">
-            <User size={18} />
-            Memory
-          </button>
-
-          <button className="sidebar-item">
-            <Settings size={18} />
-            Settings
-          </button>
-
-          <div className="sidebar-bottom">
-            <div className="user-avatar">N</div>
-            <div className="user-info">
-              <strong>NEXUS USER</strong>
-              <span>Personal Assistant</span>
-            </div>
-          </div>
-
-        </aside>
-      )}
-
-      <main className="main-content">
-
-        <header className="topbar">
-
-          <div className="topbar-left">
-            {!sidebarOpen && (
-              <button onClick={() => setSidebarOpen(true)}>
-                <Menu size={21} />
-              </button>
-            )}
-
-            <span>NEXUS AI</span>
-            <span className="online-status">
-              <span></span>
-              AI Assistant
-            </span>
-          </div>
-
-          <button
-            className="theme-button"
-            onClick={() => setDarkMode(!darkMode)}
-          >
-            {darkMode ? <Sun size={19} /> : <Moon size={19} />}
-          </button>
-
-        </header>
-
-        <section className="chat-area">
-
-          {messages.length === 0 ? (
-
-            <div className="welcome-screen">
-
-              <div className="welcome-icon">
-                <Sparkles size={36} />
-              </div>
-
-              <h1>
-                Hello, <span>Welcome to NEXUS AI.</span>
-              </h1>
-
-              <p>
-                Your intelligent personal AI assistant.
-                <br />
-                Ask anything. Create anything. Explore everything.
-              </p>
-
-              <div className="suggestions">
-
-                <button onClick={() => setMessage("Tell me about yourself")}>
-                  <Sparkles size={18} />
-                  <span>
-                    <strong>Get started</strong>
-                    <small>Meet your AI assistant</small>
-                  </span>
-                </button>
-
-                <button onClick={() => setMessage("Help me with programming")}>
-                  <Settings size={18} />
-                  <span>
-                    <strong>Programming</strong>
-                    <small>Write and understand code</small>
-                  </span>
-                </button>
-
-                <button onClick={() => setMessage("Help me learn something new")}>
-                  <MessageSquare size={18} />
-                  <span>
-                    <strong>Learning</strong>
-                    <small>Explore new knowledge</small>
-                  </span>
-                </button>
-
-              </div>
-
-            </div>
-
-          ) : (
-
-            <div className="messages-container">
-
-              {messages.map((item, index) => (
-
-                <div
-                  key={index}
-                  className={`message-row ${item.role}`}
-                >
-
-                  <div className="message-avatar">
-                    {item.role === "user"
-                      ? <User size={19} />
-                      : <Bot size={19} />
-                    }
-                  </div>
-
-                  <div className="message-content">
-                    <strong>
-                      {item.role === "user" ? "You" : "NEXUS AI"}
-                    </strong>
-
-                    <p>{item.text}</p>
-                  </div>
-
-                </div>
-
-              ))}
-
-            </div>
-
-          )}
-
-        </section>
-
-        <footer className="composer-section">
-
-          <form className="message-form" onSubmit={sendMessage}>
-
-            <textarea
-              value={message}
-              onChange={(e) => setMessage(e.target.value)}
-              placeholder="Message NEXUS AI..."
-              rows={2}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" && !e.shiftKey) {
-                  e.preventDefault();
-                  e.currentTarget.form.requestSubmit();
-                }
-              }}
-            />
-
-            <div className="composer-actions">
-
-              <div className="composer-tools">
-                <button type="button" title="Attach file">
-                  <Paperclip size={19} />
-                </button>
-
-                <button type="button" title="Voice">
-                  <Mic size={19} />
-                </button>
-              </div>
-
-              <button
-                className="send-button"
-                type="submit"
-                disabled={!message.trim()}
-              >
-                <Send size={19} />
-              </button>
-
-            </div>
-
-          </form>
-
-          <p className="footer-note">
-            NEXUS AI can make mistakes. Verify important information.
-          </p>
-
-        </footer>
-
-      </main>
-
-    </div>
-  );
+  .composer-section {
+    padding: 12px;
+  }
 }
