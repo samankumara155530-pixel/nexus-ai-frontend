@@ -1,7 +1,7 @@
 
 import { useEffect, useState } from "react";
 import { supabase } from "./supabase";
-import Auth from "./src/auth";
+import Auth from "./src/Auth.jsx";
 import {
   Sparkles,
   Send,
@@ -48,7 +48,7 @@ export default function App() {
     setSending(true);
 
     try {
-      const apiUrl = import.meta.env.VITE_API_URL;
+      const apiUrl = import.meta.env.VITE_BACKEND_URL;
 
       if (!apiUrl) {
         throw new Error("Backend URL එක සොයාගත නොහැක.");
