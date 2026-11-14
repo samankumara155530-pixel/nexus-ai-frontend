@@ -1,265 +1,148 @@
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { supabase } from "./supabase";
+import Auth from "./Auth";
 import {
-  Menu,
-  Plus,
-  MessageSquare,
-  Send,
   Sparkles,
-  Settings,
-  User,
-  Bot,
-  PanelLeftClose,
-  Paperclip,
-  Mic,
-  Sun,
-  Moon
+  Send,
+  LogOut,
+  User
 } from "lucide-react";
 
 export default function App() {
+  const [session, setSession] = useState(null);
+  const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([]);
-  const [sidebarOpen, setSidebarOpen] = useState(true);
-  const [darkMode, setDarkMode] = useState(true);
+  const [sending, setSending] = useState(false);
 
-  function sendMessage(e) {
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data }) => {
+      setSession(data.session);
+      setLoading(false);
+    });
+
+    const { data: listener } =
+      supabase.auth.onAuthStateChange((_event, session) => {
+        setSession(session);
+      });
+
+    return () => listener.subscription.unsubscribe();
+  }, []);
+
+  async function sendMessage(e) {
     e.preventDefault();
 
-    if (!message.trim()) return;
+    if (!message.trim() || sending) return;
 
-    setMessages((previous) => [
-      ...previous,
-      {
-        role: "user",
-        text: message.trim()
-      },
-      {
-        role: "assistant",
-        text: "ඔබගේ පණිවිඩය ලැබුණා. NEXUS AI Backend සම්බන්ධ කිරීම ඊළඟ පියවරේදී සිදු කරමු."
-      }
+    const text = message.trim();
+
+    setMessages(prev => [
+      ...prev,
+      { role: "user", text }
     ]);
 
     setMessage("");
+    setSending(true);
+
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_BACKEND_URL}/chat`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${session.access_token}`
+          },
+          body: JSON.stringify({ message: text })
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "AI request failed");
+      }
+
+      setMessages(prev => [
+        ...prev,
+        { role: "assistant", text: data.reply }
+      ]);
+
+    } catch (error) {
+      setMessages(prev => [
+        ...prev,
+        {
+          role: "assistant",
+          text: `දෝෂයක් ඇතිවුණා: ${error.message}`
+        }
+      ]);
+    } finally {
+      setSending(false);
+    }
   }
 
-  function newChat() {
+  async function logout() {
+    await supabase.auth.signOut();
     setMessages([]);
-    setMessage("");
+  }
+
+  if (loading) {
+    return <div className="loading-screen">NEXUS AI Loading...</div>;
+  }
+
+  if (!session) {
+    return <Auth />;
   }
 
   return (
-    <div className={`nexus-app ${darkMode ? "dark" : "light"}`}>
+    <div className="nexus-app">
+      <header className="topbar">
+        <div className="brand">
+          <Sparkles />
+          <strong>NEXUS AI</strong>
+        </div>
 
-      {sidebarOpen && (
-        <aside className="sidebar">
+        <button onClick={logout} className="logout-button">
+          <LogOut size={18} />
+          Sign Out
+        </button>
+      </header>
 
-          <div className="brand">
-            <div className="brand-icon">
-              <Sparkles size={23} />
-            </div>
-            <span>NEXUS AI</span>
-            <button onClick={() => setSidebarOpen(false)}>
-              <PanelLeftClose size={19} />
-            </button>
+      <main className="chat-area">
+        {messages.length === 0 ? (
+          <div className="welcome-screen">
+            <Sparkles size={40} />
+            <h1>Welcome to NEXUS AI</h1>
+            <p>Your Intelligent Personal AI Assistant</p>
           </div>
-
-          <button className="new-chat" onClick={newChat}>
-            <Plus size={19} />
-            New Chat
-          </button>
-
-          <div className="sidebar-heading">
-            WORKSPACE
-          </div>
-
-          <button className="sidebar-item active">
-            <MessageSquare size={18} />
-            Chat
-          </button>
-
-          <button className="sidebar-item">
-            <User size={18} />
-            Memory
-          </button>
-
-          <button className="sidebar-item">
-            <Settings size={18} />
-            Settings
-          </button>
-
-          <div className="sidebar-bottom">
-            <div className="user-avatar">N</div>
-            <div className="user-info">
-              <strong>NEXUS USER</strong>
-              <span>Personal Assistant</span>
-            </div>
-          </div>
-
-        </aside>
-      )}
-
-      <main className="main-content">
-
-        <header className="topbar">
-
-          <div className="topbar-left">
-            {!sidebarOpen && (
-              <button onClick={() => setSidebarOpen(true)}>
-                <Menu size={21} />
-              </button>
-            )}
-
-            <span>NEXUS AI</span>
-            <span className="online-status">
-              <span></span>
-              AI Assistant
-            </span>
-          </div>
-
-          <button
-            className="theme-button"
-            onClick={() => setDarkMode(!darkMode)}
-          >
-            {darkMode ? <Sun size={19} /> : <Moon size={19} />}
-          </button>
-
-        </header>
-
-        <section className="chat-area">
-
-          {messages.length === 0 ? (
-
-            <div className="welcome-screen">
-
-              <div className="welcome-icon">
-                <Sparkles size={36} />
+        ) : (
+          <div className="messages-container">
+            {messages.map((item, index) => (
+              <div key={index} className={`message-row ${item.role}`}>
+                {item.role === "user" ? <User /> : <Sparkles />}
+                <p>{item.text}</p>
               </div>
-
-              <h1>
-                Hello, <span>Welcome to NEXUS AI.</span>
-              </h1>
-
-              <p>
-                Your intelligent personal AI assistant.
-                <br />
-                Ask anything. Create anything. Explore everything.
-              </p>
-
-              <div className="suggestions">
-
-                <button onClick={() => setMessage("Tell me about yourself")}>
-                  <Sparkles size={18} />
-                  <span>
-                    <strong>Get started</strong>
-                    <small>Meet your AI assistant</small>
-                  </span>
-                </button>
-
-                <button onClick={() => setMessage("Help me with programming")}>
-                  <Settings size={18} />
-                  <span>
-                    <strong>Programming</strong>
-                    <small>Write and understand code</small>
-                  </span>
-                </button>
-
-                <button onClick={() => setMessage("Help me learn something new")}>
-                  <MessageSquare size={18} />
-                  <span>
-                    <strong>Learning</strong>
-                    <small>Explore new knowledge</small>
-                  </span>
-                </button>
-
-              </div>
-
-            </div>
-
-          ) : (
-
-            <div className="messages-container">
-
-              {messages.map((item, index) => (
-
-                <div
-                  key={index}
-                  className={`message-row ${item.role}`}
-                >
-
-                  <div className="message-avatar">
-                    {item.role === "user"
-                      ? <User size={19} />
-                      : <Bot size={19} />
-                    }
-                  </div>
-
-                  <div className="message-content">
-                    <strong>
-                      {item.role === "user" ? "You" : "NEXUS AI"}
-                    </strong>
-
-                    <p>{item.text}</p>
-                  </div>
-
-                </div>
-
-              ))}
-
-            </div>
-
-          )}
-
-        </section>
-
-        <footer className="composer-section">
-
-          <form className="message-form" onSubmit={sendMessage}>
-
-            <textarea
-              value={message}
-              onChange={(e) => setMessage(e.target.value)}
-              placeholder="Message NEXUS AI..."
-              rows={2}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" && !e.shiftKey) {
-                  e.preventDefault();
-                  e.currentTarget.form.requestSubmit();
-                }
-              }}
-            />
-
-            <div className="composer-actions">
-
-              <div className="composer-tools">
-                <button type="button" title="Attach file">
-                  <Paperclip size={19} />
-                </button>
-
-                <button type="button" title="Voice">
-                  <Mic size={19} />
-                </button>
-              </div>
-
-              <button
-                className="send-button"
-                type="submit"
-                disabled={!message.trim()}
-              >
-                <Send size={19} />
-              </button>
-
-            </div>
-
-          </form>
-
-          <p className="footer-note">
-            NEXUS AI can make mistakes. Verify important information.
-          </p>
-
-        </footer>
-
+            ))}
+          </div>
+        )}
       </main>
 
+      <footer className="composer-section">
+        <form onSubmit={sendMessage} className="message-form">
+          <textarea
+            value={message}
+            onChange={e => setMessage(e.target.value)}
+            placeholder="Message NEXUS AI..."
+            rows={2}
+          />
+
+          <button type="submit" disabled={sending || !message.trim()}>
+            <Send size={20} />
+          </button>
+        </form>
+        {sending && <p> NEXUS AI පිළිතුර සකස් කරමින්...</p>}
+      </footer>
     </div>
   );
 }
