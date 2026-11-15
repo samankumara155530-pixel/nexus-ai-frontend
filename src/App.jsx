@@ -12,24 +12,50 @@ import {
 export default function App() {
   const [session, setSession] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [initError, setInitError] = useState("");
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([]);
   const [sending, setSending] = useState(false);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data, error }) => {
-      if (!error) {
-        setSession(data.session);
+    let mounted = true;
+
+    async function initialize() {
+      try {
+        const { data, error } =
+          await supabase.auth.getSession();
+
+        if (error) throw error;
+
+        if (mounted) {
+          setSession(data.session);
+        }
+      } catch (error) {
+        console.error("NEXUS initialization error:", error);
+
+        if (mounted) {
+          setInitError(error.message || "Supabase connection failed");
+        }
+      } finally {
+        if (mounted) {
+          setLoading(false);
+        }
       }
-      setLoading(false);
-    });
+    }
+
+    initialize();
 
     const { data: listener } =
       supabase.auth.onAuthStateChange((_event, session) => {
-        setSession(session);
+        if (mounted) {
+          setSession(session);
+        }
       });
 
-    return () => listener.subscription.unsubscribe();
+    return () => {
+      mounted = false;
+      listener.subscription.unsubscribe();
+    };
   }, []);
 
   async function sendMessage(e) {
@@ -94,20 +120,37 @@ export default function App() {
   }
 
   async function logout() {
-    const { error } = await supabase.auth.signOut();
+    try {
+      const { error } = await supabase.auth.signOut();
 
-    if (error) {
-      console.error("Logout error:", error.message);
-      return;
+      if (error) throw error;
+
+      setMessages([]);
+    } catch (error) {
+      console.error("Logout error:", error);
+      alert(error.message);
     }
-
-    setMessages([]);
   }
 
   if (loading) {
     return (
       <div className="loading-screen">
         NEXUS AI Loading...
+      </div>
+    );
+  }
+
+  if (initError) {
+    return (
+      <div className="loading-screen">
+        <div style={{ textAlign: "center", padding: "25px" }}>
+          <Sparkles size={40} />
+          <h2>NEXUS AI Error</h2>
+          <p>{initError}</p>
+          <button onClick={() => window.location.reload()}>
+            Try Again
+          </button>
+        </div>
       </div>
     );
   }
