@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import React, { useState } from "react";
 import { supabase } from "../supabase";
 import { Sparkles, Mail, Lock } from "lucide-react";
 
