@@ -228,12 +228,12 @@ export default function App() {
     setConversationId(null);
   }
 
-  if (loading) return <div className="loading-screen">NEXUS AI Loading...</div>;
+  if (loading) return <div className="loading-screen">NEXUS AI සූදානම් වෙමින්...</div>;
 
   if (initError) {
     return <div className="loading-screen"><div className="startup-error">
       <Sparkles size={40} /><h2>NEXUS AI Error</h2><p>{initError}</p>
-      <button onClick={() => window.location.reload()}>Try Again</button>
+      <button onClick={() => window.location.reload()}>නැවත උත්සාහ කරන්න</button>
     </div></div>;
   }
 
@@ -244,17 +244,17 @@ export default function App() {
       <header className="topbar">
         <div className="brand"><Sparkles /><strong>NEXUS AI</strong></div>
         <div className="topbar-actions">
-          <button className="new-chat-button" onClick={startNewConversation}><Plus size={17} /> New Chat</button>
-          <button onClick={logout} className="logout-button"><LogOut size={18} /> Sign Out</button>
+          <button className="new-chat-button" onClick={startNewConversation}><Plus size={17} /> අලුත් කතාබහක්</button>
+          <button onClick={logout} className="logout-button"><LogOut size={18} /> ඉවත් වන්න</button>
         </div>
       </header>
 
       <div className="workspace">
         <aside className="sidebar">
           <section className="sidebar-section">
-            <h3><MessageSquare size={17} /> Chat History</h3>
-            <button className="sidebar-new-chat" onClick={startNewConversation}><Plus size={16} /> New conversation</button>
-            {conversations.length === 0 && <p className="muted-text">තවම සංවාද නැහැ.</p>}
+            <h3><MessageSquare size={17} /> කතාබහ ඉතිහාසය</h3>
+            <button className="sidebar-new-chat" onClick={startNewConversation}><Plus size={16} /> අලුත් කතාබහ</button>
+            {conversations.length === 0 && <p className="muted-text">තවම කතාබහක් නැහැ.</p>}
             <div className="conversation-list">
               {conversations.map(item => (
                 <button
@@ -264,48 +264,48 @@ export default function App() {
                   title={item.title}
                 >
                   <MessageSquare size={15} />
-                  <span>{item.title || "New conversation"}</span>
+                  <span>{item.title || "අලුත් කතාබහ"}</span>
                 </button>
               ))}
             </div>
           </section>
 
           <section className="sidebar-section memory-section">
-            <h3><Brain size={17} /> Saved Memory</h3>
+            <h3><Brain size={17} /> සුරැකි මතක</h3>
             <form onSubmit={saveMemory} className="memory-form">
               <textarea
                 value={memoryText}
                 onChange={event => setMemoryText(event.target.value)}
-                placeholder="NEXUS AI මතක තබාගත යුතු දෙයක් ලියන්න..."
+                placeholder="NEXUS AI මතක තබාගත යුතු දෙයක් මෙහි ලියන්න..."
                 rows={3}
                 maxLength={500}
               />
               <button type="submit" disabled={!memoryText.trim() || memoryBusy}>
-                <Save size={15} /> {memoryBusy ? "Saving..." : "Save Memory"}
+                <Save size={15} /> {memoryBusy ? "සුරකිමින්..." : "මතකය සුරකින්න"}
               </button>
             </form>
             <div className="memory-list">
               {memories.map(item => (
                 <div className="memory-item" key={item.id}>
                   <span>{item.memory}</span>
-                  <button onClick={() => deleteMemory(item.id)} title="Delete memory" aria-label="Delete memory"><Trash2 size={14} /></button>
+                  <button onClick={() => deleteMemory(item.id)} title="මතකය මකන්න" aria-label="මතකය මකන්න"><Trash2 size={14} /></button>
                 </div>
               ))}
-              {memories.length === 0 && <p className="muted-text">තවම සුරැකි මතක නැහැ.</p>}
+              {memories.length === 0 && <p className="muted-text">තවම මතක සුරැකී නැහැ.</p>}
             </div>
           </section>
         </aside>
 
         <main className="chat-panel">
           {notice && <div className="notice" role="status">{notice}</div>}
-          {loadingHistory && <div className="history-loading"><RefreshCw size={16} /> සංවාද ඉතිහාසය ලබාගනිමින්...</div>}
+          {loadingHistory && <div className="history-loading"><RefreshCw size={16} /> කතාබහ ඉතිහාසය ලබාගනිමින්...</div>}
           <div className="chat-area">
             {messages.length === 0 ? (
               <div className="welcome-screen">
                 <Sparkles size={40} />
-                <h1>Welcome to NEXUS AI</h1>
-                <p>Your Intelligent Personal AI Assistant</p>
-                <p className="welcome-hint">ඔබේ සංවාද ස්වයංක්‍රීයව සුරැකේ. වැදගත් දේවල් Saved Memory තුළ සුරකින්න.</p>
+                <h1>NEXUS AI වෙත සාදරයෙන් පිළිගනිමු</h1>
+                <p>ඔබේ බුද්ධිමත් පුද්ගලික AI සහායකයා</p>
+                <p className="welcome-hint">ඔබේ සංවාද ස්වයංක්‍රීයව සුරැකේ. වැදගත් දේවල් සුරැකි මතක තුළ සුරකින්න.</p>
               </div>
             ) : (
               <div className="messages-container">
@@ -323,7 +323,7 @@ export default function App() {
               <textarea
                 value={message}
                 onChange={event => setMessage(event.target.value)}
-                placeholder="Message NEXUS AI..."
+                placeholder="NEXUS AI වෙත පණිවිඩයක් ලියන්න..."
                 rows={2}
               />
               <button type="submit" disabled={sending || !message.trim()}><Send size={20} /></button>
