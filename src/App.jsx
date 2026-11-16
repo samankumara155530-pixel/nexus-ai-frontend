@@ -85,7 +85,7 @@ export default function App() {
     try {
       const apiUrl = import.meta.env.VITE_BACKEND_URL;
       if (!apiUrl) throw new Error("Backend URL එක සොයාගත නොහැක.");
-      const response = await fetch(`${apiUrl.replace(/\\/+$/, "")}/chat`, {
+      const response = await fetch(`${apiUrl.replace(/\/+$/, "")}/chat`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
