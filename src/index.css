@@ -527,8 +527,12 @@ button {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
+  .sidebar {
+    max-height: 48vh;
+    overflow-y: auto;
+  }
   .memory-section {
-    display: none;
+    display: block;
   }
 
   .topbar-actions {
