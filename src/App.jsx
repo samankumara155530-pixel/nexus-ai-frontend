@@ -67,8 +67,7 @@ export default function App() {
       setIsPasswordRecovery(false);
       setNewPassword("");
       setConfirmPassword("");
-      setRecoveryMessage("මුරපදය සාර්ථකව වෙනස් කළා. දැන් නව මුරපදයෙන් පිවිසිය හැකියි.");
-      await supabase.auth.signOut();
+      setRecoveryMessage("මුරපදය සාර්ථකව වෙනස් කළා.");
     } catch (error) {
       setRecoveryMessage(error.message || "මුරපදය වෙනස් කිරීමට නොහැකි වුණා. නැවත reset link එකක් ඉල්ලන්න.");
     } finally {
