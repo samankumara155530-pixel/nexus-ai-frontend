@@ -16,6 +16,16 @@ import {
 
 const API_URL = (import.meta.env.VITE_BACKEND_URL || "").replace(/\/+$/, "");
 
+function renderMessageText(value) {
+  const normalized = String(value || "").replace(/\\([*_])/g, "$1");
+  return normalized.split(/(\\*\\*.*?\\*\\*)/g).map((part, index) => {
+    if (part.startsWith("**") && part.endsWith("**") && part.length > 4) {
+      return <strong key={index}>{part.slice(2, -2)}</strong>;
+    }
+    return <React.Fragment key={index}>{part}</React.Fragment>;
+  });
+}
+
 export default function App() {
   const [session, setSession] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -312,7 +322,7 @@ export default function App() {
                 {messages.map((item, index) => (
                   <div key={item.id || index} className={`message-row ${item.role}`}>
                     {item.role === "user" ? <User /> : <Sparkles />}
-                    <p>{item.text}</p>
+                    <p>{renderMessageText(item.text)}</p>
                   </div>
                 ))}
               </div>
