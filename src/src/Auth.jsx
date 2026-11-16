@@ -25,7 +25,7 @@ export default function Auth() {
 
         if (error) throw error;
 
-        setMessage("Login සාර්ථකයි!");
+        setMessage("සාර්ථකව ඇතුළු වුණා!");
 
       } else {
         const { data, error } =
@@ -42,7 +42,7 @@ export default function Auth() {
         setMessage(
           data.session
             ? "ගිණුම සාර්ථකව නිර්මාණය වුණා!"
-            : "Email එක පරීක්ෂා කර තහවුරු කරන්න."
+            : "ඔබේ විද්‍යුත් තැපෑල පරීක්ෂා කර ගිණුම තහවුරු කරන්න."
         );
       }
 
@@ -63,21 +63,21 @@ export default function Auth() {
         </div>
 
         <h1>NEXUS AI</h1>
-        <p>Your Intelligent Personal Assistant</p>
+        <p>ඔබේ බුද්ධිමත් පුද්ගලික සහායකයා</p>
 
         <h2>
-          {isLogin ? "Welcome Back" : "Create Account"}
+          {isLogin ? "නැවත සාදරයෙන් පිළිගනිමු" : "ගිණුමක් සාදන්න"}
         </h2>
 
         <form onSubmit={handleSubmit}>
-          <label>Email Address</label>
+          <label>විද්‍යුත් තැපැල් ලිපිනය</label>
 
           <div className="auth-input">
             <Mail size={18} />
 
             <input
               type="email"
-              placeholder="Enter your email"
+              placeholder="ඔබේ විද්‍යුත් තැපැල් ලිපිනය ඇතුළත් කරන්න"
               value={email}
               onChange={e => setEmail(e.target.value)}
               autoComplete="email"
@@ -85,14 +85,14 @@ export default function Auth() {
             />
           </div>
 
-          <label>Password</label>
+          <label>මුරපදය</label>
 
           <div className="auth-input">
             <Lock size={18} />
 
             <input
               type="password"
-              placeholder="Enter your password"
+              placeholder="මුරපදය ඇතුළත් කරන්න"
               value={password}
               onChange={e => setPassword(e.target.value)}
               minLength={6}
@@ -105,8 +105,8 @@ export default function Auth() {
 
           <button type="submit" disabled={loading}>
             {loading
-              ? "Please wait..."
-              : isLogin ? "Sign In" : "Sign Up"}
+              ? "මඳක් රැඳී සිටින්න..."
+              : isLogin ? "ඇතුළු වන්න" : "ගිණුම සාදන්න"}
           </button>
         </form>
 
@@ -116,8 +116,8 @@ export default function Auth() {
 
         <p>
           {isLogin
-            ? "Don't have an account?"
-            : "Already have an account?"}
+            ? "ගිණුමක් නැද්ද?"
+            : "දැනටමත් ගිණුමක් තිබේද?"}
 
           <button
             type="button"
@@ -127,7 +127,7 @@ export default function Auth() {
               setMessage("");
             }}
           >
-            {isLogin ? " Sign Up" : " Sign In"}
+            {isLogin ? " ගිණුම සාදන්න" : " ඇතුළු වන්න"}
           </button>
         </p>
 
