@@ -140,7 +140,8 @@ export default function App() {
         const items = conversationData.conversations || [];
         setConversations(items);
         setMemories(memoryData.memories || []);
-        if (items.length) await openConversation(items[0].id);
+        // Start with a clean chat view. Older conversations remain available in the sidebar
+        // and are loaded only when the user explicitly selects one.
       } catch (error) {
         if (active) setNotice(error.message);
       }
